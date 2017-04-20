@@ -28,6 +28,7 @@ const send = (action: OfflineAction, dispatch, config: Config, retries = 0) => {
     .effect(metadata.effect, action)
     .then(result => dispatch(complete(metadata.commit, true, result)))
     .catch(error => {
+      throw error;
       // discard
       if (config.discard(error, action, retries)) {
         console.log('Discarding action', action.type);
