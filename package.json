@@ -12,7 +12,8 @@
     "prepublish": "npm run lint && npm run flow && npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "postinstall": "npm run build"
   },
   "jest": {
     "rootDir": "src"
