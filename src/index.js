@@ -8,15 +8,14 @@ import { enhanceReducer } from './updater';
 import { applyDefaults } from './config';
 import { networkStatusChanged } from './actions';
 
-// @TODO: Take createStore as config?
+/* // @TODO: Take createStore as config?
 
 // eslint-disable-next-line no-unused-vars
 let persistor;
 
 export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) => (
   reducer: any,
-  preloadedState: any,
-  enhancer: any = x => x
+  preloadedState: any
 ) => {
   console.log('user config', userConfig);
   const config = applyDefaults(userConfig);
@@ -30,12 +29,10 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
   const offlineMiddleware = applyMiddleware(createOfflineMiddleware(config));
 
   // create autoRehydrate enhancer if required
-  const offlineEnhancer = config.persist && config.rehydrate
-    ? compose(offlineMiddleware, enhancer, autoRehydrate(config.persistOptions.autoRehydrate))
-    : compose(offlineMiddleware, enhancer);
+  const offlineEnhancer = compose(offlineMiddleware);
 
   // create store
-  const store = createStore(offlineReducer, preloadedState, offlineEnhancer);
+  const store = createStore(offlineReducer, preloadedState, applyMiddleware(createOfflineMiddleware(config)));
 
   // launch store persistor
   if (config.persist) {
@@ -50,4 +47,18 @@ export const offline = (userConfig: $Shape<Config> = {}) => (createStore: any) =
   }
 
   return store;
+};*/
+export const networkStatusChangedAction = networkStatusChanged;
+
+export const createOfflineReducer = (reducers) => enhanceReducer(reducers);
+
+export const offlineCompose = (userConfig: $Shape<Config> = {}) => (middleware, funcs) => {
+  userConfig.log && console.log('user config', userConfig);
+  const config = applyDefaults(userConfig);
+
+  userConfig.log && console.log('Creating offline store', config);
+
+  const offlineMiddleware = createOfflineMiddleware(config);
+
+  return compose(autoRehydrate(config.persistOptions.autoRehydrate), applyMiddleware(offlineMiddleware, ...middleware), ...funcs);
 };
