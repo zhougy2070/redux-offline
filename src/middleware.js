@@ -23,7 +23,7 @@ const complete = (action: any, success: boolean, payload: {}): ResultAction => {
     }
   }
   
-  return { ...action, payload, meta: { ...action.meta, success, completed: true } };
+  return { ...action, payload, meta: { ...(action.meta || {}), success, completed: true } };
 };
 
 const take = (state: AppState, config: Config): Outbox => {
